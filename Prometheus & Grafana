@@ -1,28 +1,40 @@
 **************Do all the things in Master Node***************
 
-1). create dir for prometheus and grafana 
+1). create two dir, prometheus and grafana 
 
-2). create pv.yaml for promo and grafana
+2). create pv for Prometheus
 
-3). create namesapce as monitoring (kubectl create ns monitoring)
+3). In pv.yaml file add the name as promo-pv and give the slave path and value as slave-name
 
-4). helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+4) same as for Grafana to create the pv.yaml in Grafana directory
+
+5) create namespace as monitoring --> kubectl create ns monitoring
+
+6) install helm
+
+7) install prometheus
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
+paste the command one by one
 
-6). helm install prometheus prometheus-community/prometheus \
+helm install prometheus prometheus-community/prometheus \
 --namespace monitoring \
 --set alertmanager.persistentVolume.storageClass="standard" \
 --set server.persistentVolume.storageClass="standard"
+this is single command
 
-7). apply pv.yaml file and delete the pvc file, its creating when apply the pv file 
-(slave1 for promo and slave2 for grafana)
+8) then apply pv.yaml --> kubectl apply -f pv.yaml -n monitoring
+check---> kubectl get pvc -n monitoring
 
-8) apply pvc.yaml using the same name when i delete the pvc file 
+9) create pvc file with the same name as previously we check
 
-9). in grafana dir apply the pv file same as prometheus
+10) delete old pvc file--> kubectl delete pvc promotheus-server -n monitoring
 
-10). create grafana.yaml file  
+11) then apply pvc.yaml --> kubectl apply -f pvc.yaml -n monitoring
+
+12) then create Grafana.yaml in Grafana dir
 datasources:
   datasources.yaml:
     apiVersion: 1
@@ -33,9 +45,9 @@ datasources:
       access: proxy
       isDefault: true
 
-11). apply pv file and delete the pvc file and add the pvc file as same name when i delete the pvc
+13) then install Grafana --> in Grafana command we can change the passwd and path and then NodePort instead of LoadBalancer
 
-12). helm install grafana grafana/grafana \
+ helm install grafana grafana/grafana \
     --namespace monitoring \
     --set persistence.storageClassName="standard" \
     --set persistence.enabled=true \
@@ -43,7 +55,11 @@ datasources:
     --values /home/ubuntu/grafana/grafana.yaml \
     --set service.type=Nodeport
 
-13). finally see the service file 
-      (kubectl get svc -n monitoring)
+14) we get the Grafana pvc in monitoring namespace then we delete the pvc and creating the same name of pvc
 
-14). Promthus-grafana-monitoring 11802,1860,17375----> grafana no
+15) then check ---> kubectl get svc -n monitoring 
+
+16) copy the port number and ip address of slave then login into the grafana
+
+
+
