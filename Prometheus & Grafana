@@ -10,7 +10,7 @@
 
 5) create namespace as monitoring --> kubectl create ns monitoring
 
-6) install helm
+6) snap install helm --classic
 
 7) install prometheus
 
